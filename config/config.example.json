@@ -1,0 +1,90 @@
+{
+  "system": {
+    "name": "BPDevice-01",
+    "location": "Front Gate",
+    "timezone": "America/New_York",
+    "coordinates": {
+      "latitude": 40.7128,
+      "longitude": -74.0060
+    }
+  },
+  "detection": {
+    "wifi": {
+      "enabled": true,
+      "interface": "wlan1",
+      "channels": [1, 6, 11],
+      "dwellTime": 250,
+      "signalThreshold": -90
+    },
+    "bluetooth": {
+      "enabled": true,
+      "interfaces": ["hci0"],
+      "scanInterval": 10000,
+      "scanWindow": 5000,
+      "rssiThreshold": -90
+    }
+  },
+  "alerts": {
+    "enabled": true,
+    "cooldownMinutes": 5,
+    "minSignalStrength": -80,
+    "requiredDetections": 3,
+    "rules": [
+      {
+        "name": "New Device Alert",
+        "type": "new_device",
+        "enabled": true,
+        "conditions": {
+          "signalStrength": -80,
+          "detectionCount": 3,
+          "timeWindow": 60
+        },
+        "actions": ["lora", "log"]
+      },
+      {
+        "name": "Proximity Alert",
+        "type": "proximity",
+        "enabled": true,
+        "conditions": {
+          "signalStrength": -60,
+          "detectionCount": 1
+        },
+        "actions": ["lora", "log"]
+      },
+      {
+        "name": "Night Mode",
+        "type": "signal_threshold",
+        "enabled": true,
+        "schedule": {
+          "startTime": "22:00",
+          "endTime": "06:00",
+          "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        },
+        "conditions": {
+          "signalStrength": -85,
+          "detectionCount": 2
+        },
+        "actions": ["lora", "log", "webhook"]
+      }
+    ]
+  },
+  "lora": {
+    "enabled": true,
+    "port": "/dev/ttyAMA0",
+    "baudRate": 115200,
+    "deviceId": "BP001"
+  },
+  "whitelist": {
+    "devices": [
+      {
+        "macAddress": "AA:BB:CC:DD:EE:FF",
+        "name": "Owner's Phone",
+        "type": "permanent"
+      }
+    ],
+    "manufacturers": [
+      "Apple Inc.",
+      "Samsung Electronics"
+    ]
+  }
+}

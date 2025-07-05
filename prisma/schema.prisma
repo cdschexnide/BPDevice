@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/bpdevice.db"
+}
+
+model Device {
+  id            String      @id @default(cuid())
+  macAddress    String      @unique
+  type          String      // 'wifi' or 'bluetooth'
+  manufacturer  String?
+  firstSeen     DateTime    @default(now())
+  lastSeen      DateTime    @updatedAt
+  isWhitelisted Boolean     @default(false)
+  detections    Detection[]
+  alerts        Alert[]
+  
+  @@index([lastSeen])
+  @@index([type])
+  @@index([isWhitelisted])
+}
+
+model Detection {
+  id             String   @id @default(cuid())
+  deviceId       String
+  timestamp      DateTime @default(now())
+  signalStrength Int
+  frequency      Float?
+  channel        Int?
+  metadata       String?  // JSON string
+  device         Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  @@index([deviceId])
+  @@index([timestamp])
+}
+
+model Alert {
+  id            String    @id @default(cuid())
+  timestamp     DateTime  @default(now())
+  type          String    // 'intrusion', 'new_device', 'signal_threshold', 'proximity'
+  deviceId      String
+  triggered     Boolean   @default(false)
+  acknowledged  Boolean   @default(false)
+  acknowledgedAt DateTime?
+  metadata      String?   // JSON string
+  device        Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  @@index([deviceId])
+  @@index([timestamp])
+  @@index([type])
+  @@index([triggered])
+}
+
+model Whitelist {
+  id         String   @id @default(cuid())
+  macAddress String   @unique
+  name       String?
+  type       String   @default("permanent") // 'permanent' or 'temporary'
+  expiresAt  DateTime?
+  addedAt    DateTime @default(now())
+  addedBy    String?
+  
+  @@index([expiresAt])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  role         String    @default("viewer") // 'admin' or 'viewer'
+  createdAt    DateTime  @default(now())
+  lastLogin    DateTime?
+  tokens       Token[]
+  
+  @@index([username])
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model Config {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON string
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+  level     String   // 'info', 'warn', 'error'
+  module    String
+  message   String
+  metadata  String?  // JSON string
+  
+  @@index([timestamp])
+  @@index([level])
+  @@index([module])
+}
