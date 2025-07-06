@@ -254,12 +254,12 @@ export class DetectionManager extends EventEmitter {
     logger.info('Stopping detection manager');
 
     if (this.processingInterval) {
-      clearInterval(this.processingInterval);
+      clearInterval(this.processingInterval as any);
       this.processingInterval = null;
     }
 
     if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+      clearInterval(this.cleanupInterval as any);
       this.cleanupInterval = null;
     }
 

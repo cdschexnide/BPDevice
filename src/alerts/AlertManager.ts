@@ -313,7 +313,7 @@ export class AlertManager extends EventEmitter {
       });
 
       logger.info('Alert acknowledged', { alertId });
-      return alert as Alert;
+      return alert as unknown as Alert;
     } catch (error) {
       logger.error('Failed to acknowledge alert', error);
       return null;
@@ -332,14 +332,14 @@ export class AlertManager extends EventEmitter {
       take: 100,
     });
 
-    return alerts as Alert[];
+    return alerts as unknown as Alert[];
   }
 
   async stop(): Promise<void> {
     logger.info('Stopping alert manager');
 
     if (this.processingInterval) {
-      clearInterval(this.processingInterval);
+      clearInterval(this.processingInterval as any);
       this.processingInterval = null;
     }
 

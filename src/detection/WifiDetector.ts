@@ -236,7 +236,7 @@ export class WifiDetector extends EventEmitter {
     }
 
     if (this.channelHopper) {
-      clearInterval(this.channelHopper);
+      clearInterval(this.channelHopper as any);
       this.channelHopper = null;
     }
 
