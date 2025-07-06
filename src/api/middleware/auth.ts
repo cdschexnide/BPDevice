@@ -27,7 +27,7 @@ export async function authenticate(
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any;
+    jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any;
 
     const dbToken = await prisma.token.findUnique({
       where: { token },

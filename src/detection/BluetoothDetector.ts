@@ -292,7 +292,7 @@ export class BluetoothDetector extends EventEmitter {
     }
 
     if (this.classicScanner) {
-      clearInterval(this.classicScanner);
+      clearInterval(this.classicScanner as any);
       this.classicScanner = null;
     }
 
