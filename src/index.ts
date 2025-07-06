@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import * as dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import { WifiDetector } from './detection/WifiDetector';
