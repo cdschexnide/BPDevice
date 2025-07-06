@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { PrismaClient } from '@prisma/client';
 import { WifiDetector } from './WifiDetector';
 import { BluetoothDetector } from './BluetoothDetector';
-import { Device, Detection, DetectionEvent } from '@/types';
+import { Device, DetectionEvent } from '@/types';
 import { createModuleLogger } from '@/utils/logger';
 import { normalizeSignalStrength } from '@/utils/macParser';
 
@@ -110,7 +110,7 @@ export class DetectionManager extends EventEmitter {
     let device = this.deviceCache.get(detectedDevice.macAddress);
     
     if (!device) {
-      device = await this.createDevice(detectedDevice, source);
+      device = (await this.createDevice(detectedDevice, source)) || undefined;
       if (device) {
         this.emit('new-device', device);
       }

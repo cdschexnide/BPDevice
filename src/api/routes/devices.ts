@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticate, authorize, AuthRequest } from '../middleware/auth';
-import { PaginationParams, PaginatedResponse } from '@/types';
+import { PaginatedResponse } from '@/types';
 import { createModuleLogger } from '@/utils/logger';
 
 const logger = createModuleLogger('DevicesAPI');
@@ -17,7 +17,7 @@ export function createDevicesRouter(prisma: PrismaClient): Router {
       const isWhitelisted = req.query.isWhitelisted === 'true' ? true : 
                            req.query.isWhitelisted === 'false' ? false : undefined;
       const lastSeenAfter = req.query.lastSeenAfter ? new Date(req.query.lastSeenAfter as string) : undefined;
-      const minSignalStrength = req.query.signalStrength ? parseInt(req.query.signalStrength as string) : undefined;
+      // const minSignalStrength = req.query.signalStrength ? parseInt(req.query.signalStrength as string) : undefined;
 
       const where: any = {};
       if (type) where.type = type;

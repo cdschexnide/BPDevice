@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFileSync, statSync } from 'fs';
+import { readFileSync } from 'fs';
 import { SystemStats } from '@/types';
 import { logger } from './logger';
 

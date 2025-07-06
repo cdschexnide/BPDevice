@@ -48,7 +48,7 @@ export function createApiServer(
   app.use('/api/auth', createAuthRouter(prisma));
   app.use('/api/devices', createDevicesRouter(prisma));
 
-  app.get('/api/health', async (req, res) => {
+  app.get('/api/health', async (_req, res) => {
     try {
       const [uptime, wifiActive, bluetoothActive, loraStatus] = await Promise.all([
         systemMonitor.getUptime(),
@@ -91,7 +91,7 @@ export function createApiServer(
     }
   });
 
-  app.get('/api/stats/system', authenticate, async (req, res) => {
+  app.get('/api/stats/system', authenticate, async (_req, res) => {
     try {
       const stats = await systemMonitor.getSystemStats();
       res.json(stats);
@@ -101,7 +101,7 @@ export function createApiServer(
     }
   });
 
-  app.get('/api/whitelist', authenticate, async (req, res) => {
+  app.get('/api/whitelist', authenticate, async (_req, res) => {
     try {
       const devices = await prisma.whitelist.findMany({
         orderBy: { addedAt: 'desc' },
@@ -132,7 +132,7 @@ export function createApiServer(
           macAddress: macAddress.toUpperCase(),
           name,
           type,
-          addedBy: req.user?.username,
+          addedBy: (req as any).user?.username,
         },
       });
 
@@ -168,7 +168,7 @@ export function createApiServer(
     }
   });
 
-  app.get('/api/alerts', authenticate, async (req, res) => {
+  app.get('/api/alerts', authenticate, async (_req, res) => {
     try {
       const alerts = await alertManager.getActiveAlerts();
       res.json({ data: alerts });
@@ -286,7 +286,7 @@ export function createApiServer(
     }
   }, 5000);
 
-  app.use((req, res) => {
+  app.use((_req, res) => {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Endpoint not found' } });
   });
 
